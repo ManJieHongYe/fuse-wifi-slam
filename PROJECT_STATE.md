@@ -75,7 +75,7 @@ catkin_test_results --verbose
 - `FixedLagSmoother` 缓存事务，周期性更新图、优化、通知插件并边缘化旧状态。
 - `HashGraph` 保存变量和约束，并在每次优化时构造 Ceres `Problem`。
 - 官方 Range Sensor 示例与未来无线约束在结构上高度相似，可作为第一版实现模板。
-- `range_sensor_simulator` 生成 25 个带噪声先验的二维 beacon，发布 IMU、轮速里程计、range、真值和先验话题。
+- `range_sensor_simulator` 在 `[-50, 50]` 范围内以 20 m 间隔生成 36 个带噪声先验的二维 beacon，发布 IMU、轮速里程计、range、真值和先验话题。
 - `RangeSensorModel` 先缓存 `/prior_beacons`，再把每个 `/ranges` 消息转换成一个带机器人位置、地标变量、range 约束和首次地标先验的事务。
 - range tutorial 的单次 range 约束只有一个残差，而机器人位置和 beacon 位置共有四个自由度，因此首次事务需要 beacon 先验来避免秩亏。
 - 编译和单元测试成功不能替代教程运行验证；Range Sensor Tutorial 是否完整运行仍待确认。
