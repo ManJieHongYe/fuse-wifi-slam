@@ -117,6 +117,48 @@ Codex 的执行环境与用户实际使用的 WSL/Docker 终端隔离。共享�
 - `fuse_tutorials/src/range_sensor_simulator.cpp`
 - `fuse_tutorials/src/range_sensor_model.cpp`
 
+## 2026-09-26 — Range Sensor backend starts while RViz fails in the container
+
+### Context
+
+在持久化 `fuse_dev` 容器中启动 `fuse_tutorials/range_sensor_tutorial.launch`。
+
+### Symptom
+
+日志显示：
+
+```text
+range_sensor_simulator started
+state_estimation started
+Received a set_pose request
+Updated Beacon Database.
+```
+
+但 RViz 退出并报告：
+
+```text
+qt.qpa.xcb: could not connect to display
+Could not load the Qt platform plugin "xcb"
+```
+
+### Root Cause
+
+容器启动时没有正确配置宿主机的 X11/WSLg 显示环境。该问题只影响 RViz 图形界面，不影响 ROS master、模拟器、Fuse 优化器或传感器模型。
+
+### Result
+
+Fuse 后端已经启动并完成初始位姿服务调用，RangeSensorModel 已收到先验 beacon 数据库。需要继续用 `rostopic` 验证数据频率和优化输出。
+
+### Lesson
+
+验证图优化后端时，可以先忽略 RViz，优先检查节点、服务和 topic。RViz 显示属于单独的容器图形转发问题。
+
+### Related Files
+
+- `fuse_tutorials/launch/range_sensor_tutorial.launch`
+- `fuse_tutorials/config/range_sensor_tutorial.rviz`
+- `fuse_tutorials/src/range_sensor_simulator.cpp`
+
 ## 2026-09-26 — Push from a shallow clone failed with a missing object
 
 ### Context

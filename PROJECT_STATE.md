@@ -64,6 +64,7 @@ catkin_test_results --verbose
 - 已在上游 README 末尾加入中文翻译。
 - 已初步梳理 Fuse 的包结构和 Range Sensor Tutorial 数据流。
 - 已创建项目上下文文档，并推送到 GitHub public 仓库。
+- 已在用户 Docker 容器中启动 Range Sensor Tutorial：ROS master、`range_sensor_simulator` 和 `state_estimation` 均启动，`set_pose` 初始化成功，RangeSensorModel 收到 beacon 数据库。
 
 ## Current Understanding
 
@@ -78,7 +79,7 @@ catkin_test_results --verbose
 - `range_sensor_simulator` 在 `[-50, 50]` 范围内以 20 m 间隔生成 36 个带噪声先验的二维 beacon，发布 IMU、轮速里程计、range、真值和先验话题。
 - `RangeSensorModel` 先缓存 `/prior_beacons`，再把每个 `/ranges` 消息转换成一个带机器人位置、地标变量、range 约束和首次地标先验的事务。
 - range tutorial 的单次 range 约束只有一个残差，而机器人位置和 beacon 位置共有四个自由度，因此首次事务需要 beacon 先验来避免秩亏。
-- 编译和单元测试成功不能替代教程运行验证；Range Sensor Tutorial 是否完整运行仍待确认。
+- Range Sensor 后端节点已经运行；ROS topic 输出和优化结果还需要进一步检查。
 
 ## Modified / Important Files
 
@@ -111,8 +112,8 @@ The `jobserver unavailable: using -j1` message was a parallel-build warning and 
 
 ## Current Problems
 
-- Range Sensor Tutorial 的完整运行和 ROS topic 输出尚未验证。
-- 当前 Codex 执行环境没有可用的 ROS 命令，且无法访问用户的 Docker daemon；教程运行需要在用户的 WSL/Docker 终端确认。
+- Range Sensor Tutorial 的后端节点已经启动，但 `/ranges`、`/odom_filtered` 和 beacon 输出尚未用 `rostopic` 检查。
+- RViz 因容器内 Qt `xcb` 显示插件无法初始化而退出；图形显示仍待单独配置。
 - 用户仍在学习 Fuse 的核心对象和数据流，尚未进入 wireless constraint 编码阶段。
 - 真实 CSI 数据格式、数据集接入方式和前端输出接口尚未确定。
 
@@ -127,11 +128,12 @@ The `jobserver unavailable: using -j1` message was a parallel-build warning and 
 
 ## Next Steps
 
-1. 在用户 WSL/Docker 终端运行 Range Sensor Tutorial，确认节点、topic、RViz/输出和优化结果。
+1. 在第二个容器终端检查 `/ranges`、`/wheel_odom`、`/imu`、`/odom_filtered` 和 beacon 输出。
 2. 按调用顺序阅读 `RangeSensorModel`、`RangeConstraint` 和 `RangeCostFunctor`。
 3. 继续追踪 `Transaction` 从 `sendTransaction()` 到 `FixedLagSmoother` 的调用链。
-4. 在用户确认已掌握必要概念后，设计最小 fake bearing 消息和约束接口。
+4. 视需要配置 WSLg/X11 后重新启用 RViz；这不是验证 Fuse 后端的前置条件。
+5. 在用户确认已掌握必要概念后，设计最小 fake bearing 消息和约束接口。
 
 ## Last Updated
 
-2026-09-26 — 创建项目上下文文档并完成 GitHub public 仓库首次推送。
+2026-09-26 — Range Sensor Tutorial 后端首次启动成功；RViz 显示插件仍需配置。
