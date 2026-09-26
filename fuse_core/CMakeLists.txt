@@ -13,12 +13,24 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(Boost REQUIRED COMPONENTS serialization)
 find_package(Ceres REQUIRED)
 
+# Ubuntu 20.04 ships Ceres 1.14, whose CMake package exports the legacy
+# unscoped `ceres` target. Newer Ceres releases export `Ceres::ceres`.
+# Keep fuse compatible with both target names without aliasing a non-global
+# imported target.
 if(TARGET Ceres::ceres)
-  get_target_property(CERES_INCLUDEDIRS Ceres::ceres INTERFACE_INCLUDE_DIRECTORIES)
+  set(FUSE_CERES_TARGET Ceres::ceres)
+elseif(TARGET ceres)
+  set(FUSE_CERES_TARGET ceres)
+else()
+  set(FUSE_CERES_TARGET "")
+endif()
+
+if(FUSE_CERES_TARGET)
+  get_target_property(CERES_INCLUDEDIRS ${FUSE_CERES_TARGET} INTERFACE_INCLUDE_DIRECTORIES)
 
   if("${CERES_INCLUDEDIRS}" STREQUAL "CERES_INCLUDEDIRS-NOTFOUND")
       message(STATUS "Ceres::ceres INTERFACE_INCLUDE_DIRS not found; CERES_INCLUDEDIRS will be empty")
-      set(CERES_INCLUDEDIRS, "")
+      set(CERES_INCLUDEDIRS "")
   else()
       message(STATUS "Ceres::ceres INTERFACE_INCLUDE_DIRS: '${CERES_INCLUDEDIRS}'")
   endif()
@@ -95,10 +107,10 @@ target_include_directories(${PROJECT_NAME}
 )
 target_link_libraries(${PROJECT_NAME}
   PUBLIC
-    Ceres::ceres
+    ${FUSE_CERES_TARGET}
     ${catkin_LIBRARIES}
-  PRIVATE
     ${Boost_LIBRARIES}
+  PRIVATE
     ${GLOG_LIBRARIES}
 )
 set_target_properties(${PROJECT_NAME}

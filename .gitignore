@@ -30,3 +30,22 @@
 *.exe
 *.out
 *.app
+
+# ROS / catkin generated files
+build/
+devel/
+install/
+logs/
+.catkin_tools/
+
+# Editor and local environment files
+.vscode/
+.idea/
+.conda-pkgs/
+
+# Local secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key

@@ -1,0 +1,31 @@
+FROM ros:noetic-ros-base-focal
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    software-properties-common \
+    && add-apt-repository -y universe \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    git \
+    python3-catkin-tools \
+    python3-rosdep \
+    libceres-dev \
+    libeigen3-dev \
+    libboost-all-dev \
+    libsuitesparse-dev \
+    libgoogle-glog-dev \
+    libyaml-cpp-dev \
+    libbenchmark-dev \
+    qtbase5-dev \
+    libqwt-qt5-dev \
+    ros-noetic-roslint \
+    ros-noetic-rviz \
+    ros-noetic-rosbag \
+    ros-noetic-tf2-2d \
+    ros-noetic-diagnostic-updater \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace

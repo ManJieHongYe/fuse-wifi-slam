@@ -42,6 +42,7 @@
 
 #include <boost/serialization/access.hpp>
 
+#include <string>
 
 namespace fuse_variables
 {
