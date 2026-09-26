@@ -18,7 +18,7 @@ range measurement
   -> HashGraph / Ceres
 ```
 
-同时建立 GitHub 仓库和项目上下文文档，供用户、ChatGPT 与 Codex 同步进度。
+项目上下文文档和 GitHub 同步通道已经建立，当前回到 Fuse 学习主线。
 
 ## Environment
 
@@ -32,6 +32,7 @@ range measurement
 - Workspace on host: `/home/lenovo/wireless-Kimera-VIO/fuse_ws`
 - Workspace in container: `/workspace`
 - Repository root on host: `/home/lenovo/wireless-Kimera-VIO/fuse_ws/src/fuse`
+- Public repository: `https://github.com/ManJieHongYe/fuse-wifi-slam`
 - fuse branch: `devel`
 - fuse version/tag: `0.15.0`
 - Base commit: `8e3f0a1fef6f3b8af16a50f60bf4c11843bf4d81`
@@ -62,6 +63,7 @@ catkin_test_results --verbose
 - 已运行测试：668 tests，0 errors，0 failures，0 skipped。
 - 已在上游 README 末尾加入中文翻译。
 - 已初步梳理 Fuse 的包结构和 Range Sensor Tutorial 数据流。
+- 已创建项目上下文文档，并推送到 GitHub public 仓库。
 
 ## Current Understanding
 
@@ -109,7 +111,6 @@ The `jobserver unavailable: using -j1` message was a parallel-build warning and 
 - Range Sensor Tutorial 的完整运行和 ROS topic 输出尚未验证。
 - 用户仍在学习 Fuse 的核心对象和数据流，尚未进入 wireless constraint 编码阶段。
 - 真实 CSI 数据格式、数据集接入方式和前端输出接口尚未确定。
-- GitHub public 仓库尚未完成创建和首次推送。
 
 ## Decisions
 
@@ -122,12 +123,11 @@ The `jobserver unavailable: using -j1` message was a parallel-build warning and 
 
 ## Next Steps
 
-1. 创建并推送 GitHub public 仓库。
-2. 运行 Range Sensor Tutorial，确认节点、topic、RViz/输出和优化结果。
-3. 按调用顺序阅读 `RangeSensorModel`、`RangeConstraint` 和 `RangeCostFunctor`。
-4. 继续追踪 `Transaction` 从 `sendTransaction()` 到 `FixedLagSmoother` 的调用链。
-5. 在用户确认已掌握必要概念后，设计最小 fake bearing 消息和约束接口。
+1. 运行 Range Sensor Tutorial，确认节点、topic、RViz/输出和优化结果。
+2. 按调用顺序阅读 `RangeSensorModel`、`RangeConstraint` 和 `RangeCostFunctor`。
+3. 继续追踪 `Transaction` 从 `sendTransaction()` 到 `FixedLagSmoother` 的调用链。
+4. 在用户确认已掌握必要概念后，设计最小 fake bearing 消息和约束接口。
 
 ## Last Updated
 
-2026-09-26 — 根据本地仓库、已完成编译测试和当前学习目标创建初始项目状态。
+2026-09-26 — 创建项目上下文文档并完成 GitHub public 仓库首次推送。

@@ -70,3 +70,56 @@ Summary: 668 tests, 0 errors, 0 failures, 0 skipped
 - `docker/Dockerfile.fuse`
 - `fuse_core/CMakeLists.txt`
 - `fuse_variables/include/fuse_variables/stamped.h`
+
+## 2026-09-26 — Push from a shallow clone failed with a missing object
+
+### Context
+
+基于本地 Fuse 浅克隆创建新的 GitHub public 仓库，并推送新增文档和兼容修改。
+
+### Symptom
+
+首次 push 被 GitHub 拒绝：
+
+```text
+remote: fatal: did not receive expected object 175577fb637f1ff2c9fe6e3287162138e2d7da34
+remote unpack failed: index-pack failed
+```
+
+### Initial Hypothesis
+
+新仓库为空且本地提交存在，因此首先怀疑本地浅克隆没有完整父提交或对象，导致 push 生成的 pack 不完整。
+
+### Investigation
+
+检查结果：
+
+- `git rev-parse --is-shallow-repository` 返回 `true`。
+- `git cat-file` 无法读取远端指出的对象。
+- GitHub 仓库已经创建，但仍为空。
+
+### Root Cause
+
+本地仓库只包含浅克隆边界之后的历史。推送新增提交时，远端无法获得提交链需要的历史对象。
+
+### Solution
+
+从官方 upstream 补全 `devel` 历史和 tags：
+
+```bash
+git fetch --unshallow origin devel --tags
+git push --set-upstream github devel
+```
+
+### Result
+
+`devel` 分支成功推送，GitHub 仓库可见性为 public，默认分支为 `devel`。
+
+### Lesson
+
+从浅克隆派生新仓库时，应在首次 push 前检查 `git rev-parse --is-shallow-repository`。如果需要保留完整上游历史，应先执行 `git fetch --unshallow`。
+
+### Related Files
+
+- `.git/shallow`（补全历史后由 Git 自动移除）
+- `PROJECT_STATE.md`
