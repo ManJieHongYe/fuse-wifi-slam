@@ -38,7 +38,7 @@ range measurement
 - Base commit: `8e3f0a1fef6f3b8af16a50f60bf4c11843bf4d81`
 - Language/build: C++17, CMake, catkin tools
 - Solver: Ceres Solver
-- Current running container status: 待确认
+- Current running container status: Codex execution environment cannot access the user's Docker daemon; 待用户终端确认
 
 Important build commands used in the container:
 
@@ -75,6 +75,9 @@ catkin_test_results --verbose
 - `FixedLagSmoother` 缓存事务，周期性更新图、优化、通知插件并边缘化旧状态。
 - `HashGraph` 保存变量和约束，并在每次优化时构造 Ceres `Problem`。
 - 官方 Range Sensor 示例与未来无线约束在结构上高度相似，可作为第一版实现模板。
+- `range_sensor_simulator` 生成 25 个带噪声先验的二维 beacon，发布 IMU、轮速里程计、range、真值和先验话题。
+- `RangeSensorModel` 先缓存 `/prior_beacons`，再把每个 `/ranges` 消息转换成一个带机器人位置、地标变量、range 约束和首次地标先验的事务。
+- range tutorial 的单次 range 约束只有一个残差，而机器人位置和 beacon 位置共有四个自由度，因此首次事务需要 beacon 先验来避免秩亏。
 - 编译和单元测试成功不能替代教程运行验证；Range Sensor Tutorial 是否完整运行仍待确认。
 
 ## Modified / Important Files
@@ -109,6 +112,7 @@ The `jobserver unavailable: using -j1` message was a parallel-build warning and 
 ## Current Problems
 
 - Range Sensor Tutorial 的完整运行和 ROS topic 输出尚未验证。
+- 当前 Codex 执行环境没有可用的 ROS 命令，且无法访问用户的 Docker daemon；教程运行需要在用户的 WSL/Docker 终端确认。
 - 用户仍在学习 Fuse 的核心对象和数据流，尚未进入 wireless constraint 编码阶段。
 - 真实 CSI 数据格式、数据集接入方式和前端输出接口尚未确定。
 
@@ -123,7 +127,7 @@ The `jobserver unavailable: using -j1` message was a parallel-build warning and 
 
 ## Next Steps
 
-1. 运行 Range Sensor Tutorial，确认节点、topic、RViz/输出和优化结果。
+1. 在用户 WSL/Docker 终端运行 Range Sensor Tutorial，确认节点、topic、RViz/输出和优化结果。
 2. 按调用顺序阅读 `RangeSensorModel`、`RangeConstraint` 和 `RangeCostFunctor`。
 3. 继续追踪 `Transaction` 从 `sendTransaction()` 到 `FixedLagSmoother` 的调用链。
 4. 在用户确认已掌握必要概念后，设计最小 fake bearing 消息和约束接口。

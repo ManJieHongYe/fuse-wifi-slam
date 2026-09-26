@@ -71,6 +71,52 @@ Summary: 668 tests, 0 errors, 0 failures, 0 skipped
 - `fuse_core/CMakeLists.txt`
 - `fuse_variables/include/fuse_variables/stamped.h`
 
+## 2026-09-26 — Codex sandbox cannot run the ROS tutorial
+
+### Context
+
+尝试由 Codex 直接启动 `fuse_tutorials/range_sensor_tutorial.launch`，并检查 ROS topic 和优化输出。
+
+### Symptom
+
+当前执行环境中：
+
+- 没有 `/opt/ros/noetic` 和 `roslaunch`；
+- 访问 `/var/run/docker.sock` 被拒绝；
+- 使用提升权限重试仍返回 Docker API permission denied / `Operation not permitted`。
+
+### Investigation
+
+检查了：
+
+- Docker client 和 daemon 连接；
+- Docker socket 的权限和所属组；
+- `/workspace`、`/opt/ros/noetic` 和 ROS 命令是否存在；
+- WSL/Docker 相关环境变量。
+
+### Root Cause
+
+Codex 的执行环境与用户实际使用的 WSL/Docker 终端隔离。共享源码目录不代表共享 Docker daemon 或 ROS 运行环境。
+
+### Solution
+
+本轮先完成静态代码阅读，并将运行验证交给用户自己的 WSL/Docker 终端。运行命令和检查项记录在当前回复中，结果需要回填到 `PROJECT_STATE.md`。
+
+### Result
+
+教程源码链路已确认，但实际节点运行、ROS topic 和 RViz 输出仍待用户终端验证。
+
+### Lesson
+
+涉及 Docker、ROS master、RViz 或硬件设备的运行任务，需要先确认 Codex 是否拥有对应运行时；如果没有，应区分“代码分析完成”和“运行验证完成”。
+
+### Related Files
+
+- `fuse_tutorials/launch/range_sensor_tutorial.launch`
+- `fuse_tutorials/config/range_sensor_tutorial.yaml`
+- `fuse_tutorials/src/range_sensor_simulator.cpp`
+- `fuse_tutorials/src/range_sensor_model.cpp`
+
 ## 2026-09-26 — Push from a shallow clone failed with a missing object
 
 ### Context
